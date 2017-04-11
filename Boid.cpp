@@ -51,8 +51,8 @@ glm::vec3 Boid::calculateAvoidance(std::vector<BoidInfo> boidsInfo) {
 		if (weight == 0) {
 			weight = 0.00001f;
 		}
-		weight = 3 / (weight * weight) - 3;
-		result += (1 - weight) * vecFromBoid;
+		weight = 1 / (pow(weight, 2)) - 1;
+		result += weight * glm::normalize(vecFromBoid);
 		totalNum++;
 	}
 	if (totalNum == 0) { totalNum = 1; }
@@ -65,7 +65,10 @@ glm::vec3 Boid::calculateFollow(std::vector<BoidInfo> boidsInfo) {
 	for (BoidInfo b : getVisibleBoidsInRadius(boidsInfo, SceneParameters::followRadius)) {
 		glm::vec3 vecToBoid = b.boid->getPosition() - position;
 		float weight = b.distanceToBoid / SceneParameters::followRadiusSQ;
-		result += (1 - weight) * vecToBoid;
+		if (weight == 0) {
+			weight = 0.00001f;
+		}
+		result += (float)(1 / (pow(weight, 1.4)) - 1) * glm::normalize(vecToBoid);
 		totalNum++;
 	}
 	if (totalNum == 0) { totalNum = 1; }
@@ -76,8 +79,11 @@ glm::vec3 Boid::calculateMatchVelocity(std::vector<BoidInfo> boidsInfo) {
 	int totalNum = 0;
 	glm::vec3 result = glm::vec3(0.0f);
 	for (BoidInfo b : getVisibleBoidsInRadius(boidsInfo, SceneParameters::speedMatchRadius)) {
-		float weight = 1 - b.distanceToBoid / SceneParameters::speedMatchRadiusSQ;
-		result += weight * b.boid->getVelocity();
+		float weight = b.distanceToBoid / SceneParameters::speedMatchRadiusSQ;
+		if (weight == 0) {
+			weight = 0.00001f;
+		}
+		result += (float)(1/( pow(weight, 1.2) ) - 1) * b.boid->getVelocity();
 		totalNum++;
 	}
 	if (totalNum == 0) { totalNum = 1; }
@@ -93,7 +99,7 @@ void Boid::calculateModelMatrix(float dt) {
 	} else {
 		normal = glm::normalize(normal);
 	}
-	currentNormal = glm::normalize(currentNormal + normal * dt);
+	currentNormal = glm::normalize(currentNormal + normal * (float)pow(dt, 5));
 
 	glm::vec3 tangent = velocityNorm;
 	glm::vec3 binormal = glm::cross(tangent, normal);

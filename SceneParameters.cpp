@@ -7,11 +7,11 @@ bool SceneParameters::isFullScreen;
 float SceneParameters::zNear;
 float SceneParameters::zFar;
 
-float SceneParameters::obstacleAvoidCoef = 3.0f;
-float SceneParameters::AvoidCoef = 3.0f;
-float SceneParameters::speedMatchCoef = 1.5f;
-float SceneParameters::followCoef = 1.5f;
-float SceneParameters::fovRadians = 1.2708;
+float SceneParameters::obstacleAvoidCoef = 10005.0f;
+float SceneParameters::AvoidCoef = 17.7f;
+float SceneParameters::speedMatchCoef = 1.0f;
+float SceneParameters::followCoef = 1.0f;
+float SceneParameters::fovRadians = 1.7708;
 float SceneParameters::obstacleAvoidRadius = 5;
 float SceneParameters::obstacleAvoidRadiusSQ = 25;
 float SceneParameters::avoidRadius = 3;

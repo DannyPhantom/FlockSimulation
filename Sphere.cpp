@@ -33,8 +33,10 @@ glm::vec3 Sphere::getAvoidVector(glm::vec3 from, glm::vec3 dir) {
 		if (weight == 0) {
 			weight = 0.00001f;
 		}
-		weight = 1 / (weight * weight) - 1;
-		avoidVec = weight * -vecToClosestPoint;
+		weight = 1 / (pow(weight, 5)) - 1;
+		avoidVec = weight * -glm::normalize(vecToClosestPoint);
+		if( radius < 10)
+		std::cout << avoidVec.x << " "  << avoidVec.y << " "  << avoidVec.z << std::endl;
 	} else {
 		avoidVec = glm::vec3(0, 0, 0);
 	}
