@@ -1,9 +1,12 @@
 #include "Scene.h"
 #include "ShaderLoader.h"
 #include "ObjLoader.h"
+#include "Boid.h"
+#include "Sphere.h"
 #include "SceneParameters.h"
 #include "Libraries/glm/gtc/matrix_transform.hpp"
 #include <chrono>
+#include "Randomizer.h"
 
 Scene::Scene()
 {
@@ -45,12 +48,18 @@ void Scene::renderPhong() {
 	for (SceneObject *obj : objects) {
 		obj->draw(basicPhongShader, cam.getViewMatrix());
 	}
-	//std::cout << "Phong:" << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - t1).count() << std::endl;
 }
 
 void Scene::renderScene(float dt) {
 	//update the camera's position
 	cam.update(dt);
+
+	for (Boid *b : boids) {
+
+		b->update(boids, obstacles, dt);
+
+	}
+
 	renderPhong();
 }
 
@@ -65,10 +74,56 @@ void Scene::loadOtherStuff() {
 
 void Scene::loadObjects() {
 	ObjLoader loader;
-	objects.push_back(loader.loadFromFile("Models/bunny.obj"));
+	ship = loader.loadFromFile("Models/WraithRaiderStarship/Wraith Raider Starship.obj");
+	sphere = loader.loadFromFile("Models/Sphere.obj");
+	SceneObject *skybox = loader.loadFromFile("Models/Skybox.obj");
+	skybox -> setScale (glm::vec3(110, 110, 110));
+	objects.push_back(skybox);
 }
 
 void Scene::placeObjects() {
+	int numOfBoidsPerAxis = std::cbrt(SceneParameters::numOfBoids);
+	glm::vec3 distanceBetweenBoids = glm::vec3(SceneParameters::boidsGridSize) / (float)(numOfBoidsPerAxis + 1);
+
+	int start = -numOfBoidsPerAxis / 2;
+	int end = numOfBoidsPerAxis / 2;
+	for (int i = start; i < end; i++) {
+		for (int j = start; j < end; j++) {
+			for (int k = start; k < end; k++) {
+				Boid *b = new Boid();
+				b->setMeshes(*ship->getMeshes());
+				b->setPosition(glm::vec3(i * distanceBetweenBoids.x, j * distanceBetweenBoids.y, k * distanceBetweenBoids.z));
+				glm::vec3 velocity = glm::vec3(Randomizer::getRandomFloat(-15.0f, 15.0f), Randomizer::getRandomFloat(-15.0f, 15.0f), Randomizer::getRandomFloat(-15.0f, 15.0f));
+				std::cout << velocity.x << " " << velocity.y << " " << velocity.z << std::endl;
+				b->setVelocity(velocity);
+				objects.push_back(b);
+				boids.push_back(b);
+			}
+		}
+	}
+
+	Sphere *world = new Sphere(SceneParameters::worldRadius);
+	world->setMeshes(*sphere->getMeshes());
+	world->setIsVisible(false);
+	obstacles.push_back(world);
+	objects.push_back(world);
+
+	start = - SceneParameters::boidsGridSize;
+	end = SceneParameters::boidsGridSize;
+	for (int i = start; i < end; i++) {
+		for (int j = start; j < end; j++) {
+			for (int k = start; k < end; k++) {
+				if (Randomizer::getRandomFloat(0.0f, 1.0f) < 0.0003f) {
+					Sphere *s = new Sphere(Randomizer::getRandomFloat(0.1f, 2.0f));
+					s->setMeshes(*sphere->getMeshes());
+					s->setPosition(glm::vec3(i, j, k));
+					objects.push_back(s);
+					obstacles.push_back(s);
+				}
+			}
+		}
+	}
+
 }
 
 glm::mat4 Scene::getProjectionMatrix() {

@@ -6,6 +6,10 @@
 #include <chrono>
 #include <string>
 
+class Boid;
+class Sphere;
+class Obstacle;
+
 /*
 	The main class of the program.
 	Contains all the UI's, objects, basic controls, etc.
@@ -74,6 +78,8 @@ private:
 
 private:
 	std::vector<SceneObject *> objects;
+	std::vector<Boid *> boids;
+	std::vector<Obstacle *> obstacles;
 
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;
@@ -81,5 +87,7 @@ private:
 	//shaders
 	GLuint basicPhongShader;
 	Camera cam;
+
+	SceneObject *ship, *sphere;
 };
 

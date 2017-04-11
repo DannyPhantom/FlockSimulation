@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "SceneParameters.h"
+#include "Randomizer.h"
 
 #define GLM_FORCE_RADIANS
 
@@ -22,6 +23,8 @@ void mainLoop(void) {
 	float currentFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	float dt = currentFrameTime - lastFrameTime;
 	lastFrameTime = currentFrameTime;
+
+	if (dt > 15) {dt = 15;}
 
 	//render the scene and do other relevant stuff
 	s.renderScene(dt / 1000.0);

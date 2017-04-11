@@ -12,12 +12,13 @@
 */
 class SceneObject
 {
-private:
+protected:
 	std::vector<Mesh *> meshes;					//set of object's meshes
 	bool vaoSetup = false;						//whether VAO's have already been setup
 	bool vboSetup = false;						//whether VBO's have already been setup
 	glm::vec3 position, rotation, scale;		//object's position, rotation and scale
 	glm::mat4x4 modelMatrix;					//object's model matrix
+	bool isVisible;
 
 public:
 
@@ -91,6 +92,10 @@ public:
 		Recalculates the model matrix for the object
 	*/
 	void recalculateModelMatrix();
+
+	void setMeshes(std::vector<Mesh *> meshes) { this->meshes = meshes; }
+
+	void setIsVisible(bool visible) {isVisible = visible;}
 
 };
 

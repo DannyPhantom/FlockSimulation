@@ -31,6 +31,24 @@ public:
 	*/
 	static float getZFar();
 
+
+	static float obstacleAvoidCoef;
+	static float AvoidCoef;
+	static float speedMatchCoef;
+	static float followCoef;
+	static float fovRadians; //90 degrees
+	static float obstacleAvoidRadius;
+	static float obstacleAvoidRadiusSQ;
+	static float avoidRadius;
+	static float avoidRadiusSQ;
+	static float speedMatchRadius;
+	static float speedMatchRadiusSQ;
+	static float followRadius;
+	static float followRadiusSQ;
+	static float worldRadius;
+	static int numOfBoids;
+	static float boidsGridSize;
+
 private:
 	/*
 		No contructor, since all methods are static

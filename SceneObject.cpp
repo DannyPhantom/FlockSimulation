@@ -5,6 +5,7 @@ SceneObject::SceneObject()
 	position = glm::vec3(0, 0, 0);
 	rotation = glm::vec3(0, 0, 0);
 	scale = glm::vec3(1, 1, 1);
+	isVisible = true;
 }
 
 
@@ -43,32 +44,34 @@ void SceneObject::setupVBOs() {
 
 void SceneObject::draw(GLuint program, glm::mat4 viewMatrix)
 {
-	//setup general uniforms
-	glUniform1i(glGetUniformLocation(program, "TextureUniform"), 0);
-	glm::mat4 mvMatrix = viewMatrix * modelMatrix;
-	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(mvMatrix)));
-	glUniformMatrix4fv(glGetUniformLocation(program, "ModelViewMatrix"), 1, false, &mvMatrix[0][0]);
-	glUniformMatrix3fv(glGetUniformLocation(program, "NormalMatrix"), 1, false, &normalMatrix[0][0]);
+	if (isVisible) {
+		//setup general uniforms
+		glUniform1i(glGetUniformLocation(program, "TextureUniform"), 0);
+		glm::mat4 mvMatrix = viewMatrix * modelMatrix;
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(mvMatrix)));
+		glUniformMatrix4fv(glGetUniformLocation(program, "ModelViewMatrix"), 1, false, &mvMatrix[0][0]);
+		glUniformMatrix3fv(glGetUniformLocation(program, "NormalMatrix"), 1, false, &normalMatrix[0][0]);
 
-	//process and draw one mesh at a time
-	for (unsigned int i = 0; i < meshes.size(); i++) {
-		Mesh *mesh = meshes.at(i);
-		//bind the texture for the object if there is one
-		if (mesh->hasTexture()) {
-			mesh->getTexture()->Bind(GL_TEXTURE0);
-			glUniform1i(glGetUniformLocation(program, "TextureValid"), true);
-		}
-		else {
-			glUniform1i(glGetUniformLocation(program, "TextureValid"), false);
-		}
-		// Draw mesh
-		glBindVertexArray(mesh->getVAO());
-		glDrawElements(GL_TRIANGLES, mesh->getIndices()->size(), GL_UNSIGNED_INT, 0);
+		//process and draw one mesh at a time
+		for (unsigned int i = 0; i < meshes.size(); i++) {
+			Mesh *mesh = meshes.at(i);
+			//bind the texture for the object if there is one
+			if (mesh->hasTexture()) {
+				mesh->getTexture()->Bind(GL_TEXTURE0);
+				glUniform1i(glGetUniformLocation(program, "TextureValid"), true);
+			}
+			else {
+				glUniform1i(glGetUniformLocation(program, "TextureValid"), false);
+			}
+			// Draw mesh
+			glBindVertexArray(mesh->getVAO());
+			glDrawElements(GL_TRIANGLES, mesh->getIndices()->size(), GL_UNSIGNED_INT, 0);
 
-		//disable everything
-		glBindVertexArray(0);
-		if (mesh->hasTexture()) {
-			mesh->getTexture()->unBind(GL_TEXTURE0);
+			//disable everything
+			glBindVertexArray(0);
+			if (mesh->hasTexture()) {
+				mesh->getTexture()->unBind(GL_TEXTURE0);
+			}
 		}
 	}
 }
