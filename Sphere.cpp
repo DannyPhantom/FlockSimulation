@@ -26,17 +26,15 @@ void Sphere::create() {
 
 glm::vec3 Sphere::getAvoidVector(glm::vec3 from, glm::vec3 dir) {
 	glm::vec3 avoidVec(0);
-	glm::vec3 closestPoint = radius * glm::normalize(from - position);
+	glm::vec3 closestPoint = position + radius * glm::normalize(from - position);
 	glm::vec3 vecToClosestPoint = closestPoint - from;
 	if (glm::dot(vecToClosestPoint, vecToClosestPoint) < SceneParameters::obstacleAvoidRadiusSQ && glm::dot(vecToClosestPoint, dir) > std::cos(SceneParameters::fovRadians)) {
 		float weight = glm::dot(vecToClosestPoint, vecToClosestPoint) / SceneParameters::obstacleAvoidRadiusSQ;
 		if (weight == 0) {
 			weight = 0.00001f;
 		}
-		weight = 1 / (pow(weight, 5)) - 1;
+		weight = 1 / (pow(weight, 2)) - 1;
 		avoidVec = weight * -glm::normalize(vecToClosestPoint);
-		if( radius < 10)
-		std::cout << avoidVec.x << " "  << avoidVec.y << " "  << avoidVec.z << std::endl;
 	} else {
 		avoidVec = glm::vec3(0, 0, 0);
 	}

@@ -80,6 +80,7 @@ SceneObject *ObjLoader::processScene(const aiScene *scene) {
 		for (unsigned int j = 0; j < mesh->mNumFaces; j++)
 		{
 			aiFace face = mesh->mFaces[j];
+			if (face.mNumIndices < 3) continue;
 			assert(face.mNumIndices == 3);
 			indices.push_back(face.mIndices[0]);
 			indices.push_back(face.mIndices[1]);

@@ -7,22 +7,22 @@ bool SceneParameters::isFullScreen;
 float SceneParameters::zNear;
 float SceneParameters::zFar;
 
-float SceneParameters::obstacleAvoidCoef = 10005.0f;
-float SceneParameters::AvoidCoef = 17.7f;
-float SceneParameters::speedMatchCoef = 1.0f;
-float SceneParameters::followCoef = 1.0f;
+float SceneParameters::obstacleAvoidCoef = 30.0f;
+float SceneParameters::AvoidCoef = 5.7f;
+float SceneParameters::speedMatchCoef = 0.7f;
+float SceneParameters::followCoef = 0.7f;
 float SceneParameters::fovRadians = 1.7708;
-float SceneParameters::obstacleAvoidRadius = 5;
-float SceneParameters::obstacleAvoidRadiusSQ = 25;
-float SceneParameters::avoidRadius = 3;
-float SceneParameters::avoidRadiusSQ = 9;
-float SceneParameters::speedMatchRadius = 15;
-float SceneParameters::speedMatchRadiusSQ = 225;
-float SceneParameters::followRadius = 15;
-float SceneParameters::followRadiusSQ = 225;
+float SceneParameters::obstacleAvoidRadius = 2;
+float SceneParameters::obstacleAvoidRadiusSQ = 4;
+float SceneParameters::avoidRadius = 4;
+float SceneParameters::avoidRadiusSQ = 16;
+float SceneParameters::speedMatchRadius = 5;
+float SceneParameters::speedMatchRadiusSQ = 25;
+float SceneParameters::followRadius = 10;
+float SceneParameters::followRadiusSQ = 100;
 float SceneParameters::worldRadius = 30;
-int SceneParameters::numOfBoids = 700;
-float SceneParameters::boidsGridSize = 20;
+int SceneParameters::numOfBoids = 900;
+float SceneParameters::boidsGridSize = 30;
 
 SceneParameters::SceneParameters()
 {

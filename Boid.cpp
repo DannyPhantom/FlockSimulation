@@ -102,7 +102,7 @@ void Boid::calculateModelMatrix(float dt) {
 	currentNormal = glm::normalize(currentNormal + normal * (float)pow(dt, 5));
 
 	glm::vec3 tangent = velocityNorm;
-	glm::vec3 binormal = glm::cross(tangent, normal);
+	glm::vec3 binormal = glm::cross(tangent, currentNormal);
 	glm::mat4 modelMatrix = glm::mat4(
 				glm::vec4(binormal, 0),
 				glm::vec4(currentNormal, 0),
@@ -128,15 +128,17 @@ glm::vec3 Boid::calculateObstacleAvoidance(std::vector<Obstacle *> obstacles) {
 
 void Boid::update(std::vector<Boid*> boids, std::vector<Obstacle *> obstacles, float dt) {
 	std::vector<BoidInfo> boidsInfo = calculateDistanceToBoids(boids);
-	aimingVelocity = velocity +
-			SceneParameters::AvoidCoef * calculateAvoidance(boidsInfo) +
+	glm::vec3 accel = SceneParameters::AvoidCoef * calculateAvoidance(boidsInfo) +
 			SceneParameters::speedMatchCoef * calculateMatchVelocity(boidsInfo) +
 			SceneParameters::followCoef * calculateFollow(boidsInfo) +
 			SceneParameters::obstacleAvoidCoef * calculateObstacleAvoidance(obstacles);
+
+	aimingVelocity = velocity + (accel - glm::vec3(0, 9.8, 0)) * dt;
 	calculateModelMatrix(dt);
 
-	velocity += aimingVelocity * dt;
-	if (glm::length(velocity) > 25) { velocity = glm::normalize(velocity) * 25.0f;}
+	velocity += accel * dt;
+	if (glm::length(velocity) > 45) { velocity = glm::normalize(velocity) * 45.0f;}
+	if (glm::length(velocity) < 15) { velocity = glm::normalize(velocity) * 15.0f;}
 	position += velocity * dt;
 	if (glm::length(position) > SceneParameters::worldRadius) {
 		position = glm::normalize(position) * SceneParameters::worldRadius;

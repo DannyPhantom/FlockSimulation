@@ -93,7 +93,7 @@ void Scene::placeObjects() {
 				Boid *b = new Boid();
 				b->setMeshes(*ship->getMeshes());
 				b->setPosition(glm::vec3(i * distanceBetweenBoids.x, j * distanceBetweenBoids.y, k * distanceBetweenBoids.z));
-				glm::vec3 velocity = glm::vec3(Randomizer::getRandomFloat(-15.0f, 15.0f), Randomizer::getRandomFloat(-15.0f, 15.0f), Randomizer::getRandomFloat(-15.0f, 15.0f));
+				glm::vec3 velocity = glm::vec3(Randomizer::getRandomFloat(-25.0f, 25.0f), Randomizer::getRandomFloat(-25.0f, 25.0f), Randomizer::getRandomFloat(-25.0f, 25.0f));
 				b->setVelocity(velocity);
 				objects.push_back(b);
 				boids.push_back(b);
