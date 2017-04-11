@@ -56,6 +56,8 @@ private:
 	SceneParameters();
 	~SceneParameters();
 
+	static float loadFile();
+
 private:
 	static int screenHeight;
 	static int screenWidth;

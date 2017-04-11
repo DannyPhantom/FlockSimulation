@@ -1,0 +1,12 @@
+30.0	#obstacle avoidance coefficient
+5.7	#boid avoid coefficient
+0.7	#speed match coefficient
+0.7	#follow coefficient
+1.7708	#field of view in radians
+2	#obstacle avoidance radius
+4	#boids avoidance radius
+5	#speed match radius
+10	#follow radius
+30	#world size (radius of the sphere)
+900	#numOfBoids
+30	#boids grid size (for initial creation of boids)
