@@ -7,7 +7,7 @@
 4	#boids avoidance radius
 5	#speed match radius
 10	#follow radius
-30	#world size (radius of the sphere)
+40	#world size (radius of the sphere)
 900	#numOfBoids
 30	#boids grid size (for initial creation of boids)
 50	#mouse attraction radius
