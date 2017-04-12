@@ -35,6 +35,14 @@ public:
 	*/
 	Camera *getCamera() { return &cam; }
 
+	void enableMouseAttraction() { mouseAttractionEnabled = true; }
+	void disableMouseAttraction() { mouseAttractionEnabled = false; }
+	void setCurrentMousePos(glm::vec2 pos) {
+		currentMousePos = pos;
+		currentMousePos.y = 1 - currentMousePos.y;
+		//currentMousePos = currentMousePos * 2.0f - 1.0f;
+	}
+
 private:
 
 	/*
@@ -89,5 +97,8 @@ private:
 	Camera cam;
 
 	SceneObject *ship, *sphere;
+
+	glm::vec2 currentMousePos;
+	bool mouseAttractionEnabled;
 };
 

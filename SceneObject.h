@@ -97,5 +97,7 @@ public:
 
 	void setIsVisible(bool visible) {isVisible = visible;}
 
+	glm::vec3 getPosition() {return position;}
+
 };
 

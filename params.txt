@@ -10,3 +10,5 @@
 30	#world size (radius of the sphere)
 900	#numOfBoids
 30	#boids grid size (for initial creation of boids)
+50	#mouse attraction radius
+1	#mouse attraction coefficient

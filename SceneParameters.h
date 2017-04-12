@@ -36,6 +36,7 @@ public:
 	static float AvoidCoef;
 	static float speedMatchCoef;
 	static float followCoef;
+	static float mouseCoef;
 	static float fovRadians; //90 degrees
 	static float obstacleAvoidRadius;
 	static float obstacleAvoidRadiusSQ;
@@ -45,6 +46,8 @@ public:
 	static float speedMatchRadiusSQ;
 	static float followRadius;
 	static float followRadiusSQ;
+	static float mouseRadius;
+	static float mouseRadiusSQ;
 	static float worldRadius;
 	static int numOfBoids;
 	static float boidsGridSize;

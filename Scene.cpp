@@ -55,8 +55,22 @@ void Scene::renderScene(float dt) {
 	cam.update(dt);
 
 	for (Boid *b : boids) {
+		glm::mat4 proj = getProjectionMatrix();
+		glm::mat4 view = cam.getViewMatrix();
 
-		b->update(boids, obstacles, dt);
+		//code from http://antongerdelan.net/opengl/raycasting.html
+		float x = (2.0f * currentMousePos.x) - 1.0f;
+		float y = (2.0f * currentMousePos.y) - 1.0f;
+		float z = 1.0f;
+		glm::vec3 ray_nds = glm::vec3(x, y, z);
+		glm::vec4 ray_clip = glm::vec4(ray_nds.x, ray_nds.y, -1.0, 1.0);
+		glm::vec4 ray_eye = inverse(proj) * ray_clip;
+		ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+		glm::vec3 ray_wor = glm::vec3(inverse(view) * ray_eye);
+		// don't forget to normalise the vector at some point
+		ray_wor = glm::normalize(ray_wor);
+
+		b->update(boids, obstacles, dt, cam.getPosition(), glm::normalize(ray_wor), mouseAttractionEnabled);
 
 	}
 

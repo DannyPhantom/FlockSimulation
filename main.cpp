@@ -12,6 +12,11 @@ Scene s;
 bool closeProgram = false;
 int lastFrameTime = 0;
 
+enum Mode {
+	MODE_MOVE,
+	MODE_MOUSE,
+} mode;
+
 /*
 Main program loop.
 Calculates the delta time that's been elapsed for the given frame,
@@ -47,22 +52,26 @@ Method that is being called on any mouse move
 @param y y position of the mouse
 */
 void mouseMoveAnyway(int x, int y) {
-	//then we let the scene process the mouse movement
-	//but before we transfer the mouse coordinate from
-	//[0, width] and [0, height]
-	//to
-	//[-width/2, width/2] and [-height/2, height/2]
-	//(which is later on transfered to [-1, 1])
-	int halfWidth = SceneParameters::getScreenWidth() >> 1;
-	int halfHeight = SceneParameters::getScreenHeight() >> 1;
-	s.getCamera()->processMouseMovement(x - halfWidth, y - halfHeight);
+	if (mode == MODE_MOVE) {
+		//then we let the scene process the mouse movement
+		//but before we transfer the mouse coordinate from
+		//[0, width] and [0, height]
+		//to
+		//[-width/2, width/2] and [-height/2, height/2]
+		//(which is later on transfered to [-1, 1])
+		int halfWidth = SceneParameters::getScreenWidth() >> 1;
+		int halfHeight = SceneParameters::getScreenHeight() >> 1;
+		s.getCamera()->processMouseMovement(x - halfWidth, y - halfHeight);
 
-	//move the pointer to the center of the screen so that we don't have the mouse out there somewhere
-	if (x != halfWidth || y != halfHeight) {
-		glutWarpPointer(halfWidth, halfHeight);
+		//move the pointer to the center of the screen so that we don't have the mouse out there somewhere
+		if (x != halfWidth || y != halfHeight) {
+			glutWarpPointer(halfWidth, halfHeight);
+		}
+
+		glutPostRedisplay();
+	} else {
+		s.setCurrentMousePos(glm::vec2((float)x / SceneParameters::getScreenWidth(), (float)y / SceneParameters::getScreenHeight()));
 	}
-
-	glutPostRedisplay();
 }
 
 /*
@@ -87,6 +96,13 @@ Callback method for the mouse click
 @param y y position of the click
 */
 void mouseClick(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON) {
+		if (state == GLUT_DOWN) {
+			s.enableMouseAttraction();
+		} else {
+			s.disableMouseAttraction();
+		}
+	}
 }
 
 /*
@@ -96,27 +112,39 @@ Callback function for any normal keyboard key press
 @param y y position of the mouse at the time of click
 */
 void pressKey(unsigned char key, int x, int y) {
-	switch (key) {
-		//move forward
-	case 'w':
-		s.getCamera()->setMoveCameraForward(true);
-		break;
-		//move backwards
-	case 's':
-		s.getCamera()->setMoveCameraBackward(true);
-		break;
-		//move left
-	case 'a':
-		s.getCamera()->setMoveCameraLeft(true);
-		break;
-		//move right
-	case 'd':
-		s.getCamera()->setMoveCameraRight(true);
-		break;
-		//exit the program (escape)
-	case 27:
-		closeProgram = true;
-		break;
+	if (key == 'm') {
+		if (mode == MODE_MOVE) {
+			mode = MODE_MOUSE;
+			glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+		} else {
+			mode = MODE_MOVE;
+			glutSetCursor(GLUT_CURSOR_NONE);
+		}
+	}
+
+	if (mode == MODE_MOVE) {
+		switch (key) {
+			//move forward
+		case 'w':
+			s.getCamera()->setMoveCameraForward(true);
+			break;
+			//move backwards
+		case 's':
+			s.getCamera()->setMoveCameraBackward(true);
+			break;
+			//move left
+		case 'a':
+			s.getCamera()->setMoveCameraLeft(true);
+			break;
+			//move right
+		case 'd':
+			s.getCamera()->setMoveCameraRight(true);
+			break;
+			//exit the program (escape)
+		case 27:
+			closeProgram = true;
+			break;
+		}
 	}
 }
 
@@ -127,23 +155,25 @@ Callback function for any normal keyboard key release
 @param y y position of the mouse at the time of release
 */
 void releaseKey(unsigned char key, int x, int y) {
-	switch (key) {
-	//stop moving forward
-	case 'w':
-		s.getCamera()->setMoveCameraForward(false);
-		break;
-		//stop moving backwards
-	case 's':
-		s.getCamera()->setMoveCameraBackward(false);
-		break;
-		//stop moving left
-	case 'a':
-		s.getCamera()->setMoveCameraLeft(false);
-		break;
-		//stop moving right
-	case 'd':
-		s.getCamera()->setMoveCameraRight(false);
-		break;
+	if (mode == MODE_MOVE) {
+		switch (key) {
+		//stop moving forward
+		case 'w':
+			s.getCamera()->setMoveCameraForward(false);
+			break;
+			//stop moving backwards
+		case 's':
+			s.getCamera()->setMoveCameraBackward(false);
+			break;
+			//stop moving left
+		case 'a':
+			s.getCamera()->setMoveCameraLeft(false);
+			break;
+			//stop moving right
+		case 'd':
+			s.getCamera()->setMoveCameraRight(false);
+			break;
+		}
 	}
 }
 
@@ -152,6 +182,7 @@ Entry point.
 Sets everything up
 */
 int main(int argc, char **argv) {
+	mode = MODE_MOVE;
 	//initialize the scene parameters and
 	//set the mouse mode to move
 	SceneParameters::initialize();

@@ -27,6 +27,9 @@ float SceneParameters::followRadiusSQ;
 float SceneParameters::worldRadius;
 int SceneParameters::numOfBoids;
 float SceneParameters::boidsGridSize;
+float SceneParameters::mouseCoef;
+float SceneParameters::mouseRadius;
+float SceneParameters::mouseRadiusSQ;
 
 SceneParameters::SceneParameters()
 {
@@ -100,4 +103,7 @@ float SceneParameters::loadFile() {
 	worldRadius = values[9];
 	numOfBoids = values[10];
 	boidsGridSize = values[11];
+	mouseRadius = values[12];
+	mouseRadiusSQ = mouseRadius * mouseRadius;
+	mouseCoef = values[13];
 }

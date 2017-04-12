@@ -126,12 +126,35 @@ glm::vec3 Boid::calculateObstacleAvoidance(std::vector<Obstacle *> obstacles) {
 	return result / (float)totalNum;
 }
 
-void Boid::update(std::vector<Boid*> boids, std::vector<Obstacle *> obstacles, float dt) {
+glm::vec3 Boid::calculateMouseAttraction(glm::vec3 origin, glm::vec3 dir) {
+	glm::vec3 vecToBoid = position - origin;
+	if (glm::length(vecToBoid) < 0.001f) { return glm::vec3(0, 0, 0); }
+
+	glm::vec3 pointOnRay = origin + glm::dot(vecToBoid, dir) * dir;
+	glm::vec3 vecToPointFromBoid = pointOnRay - position;
+	float distSQ = glm::dot(vecToPointFromBoid, vecToPointFromBoid);
+	if (distSQ < 0.001f) { return glm::vec3(0, 0, 0); }
+
+	if (distSQ < SceneParameters::mouseRadiusSQ && glm::dot(velocity, vecToPointFromBoid) > std::cos(SceneParameters::fovRadians)) {
+		float weight = distSQ / SceneParameters::mouseRadiusSQ;
+		if (weight < 0.001f) {
+			weight = 0.001f;
+		}
+		weight = 1 / pow(weight, 2) - 1;
+		return weight * glm::normalize(vecToPointFromBoid);
+	}
+}
+
+void Boid::update(std::vector<Boid*> boids, std::vector<Obstacle *> obstacles, float dt, glm::vec3 camPos, glm::vec3 mouseRay, bool useMouse) {
 	std::vector<BoidInfo> boidsInfo = calculateDistanceToBoids(boids);
 	glm::vec3 accel = SceneParameters::AvoidCoef * calculateAvoidance(boidsInfo) +
 			SceneParameters::speedMatchCoef * calculateMatchVelocity(boidsInfo) +
 			SceneParameters::followCoef * calculateFollow(boidsInfo) +
 			SceneParameters::obstacleAvoidCoef * calculateObstacleAvoidance(obstacles);
+
+	if (useMouse) {
+		accel += SceneParameters::mouseCoef * calculateMouseAttraction(camPos, mouseRay);
+	}
 
 	aimingVelocity = velocity + (accel - glm::vec3(0, 9.8, 0)) * dt;
 	calculateModelMatrix(dt);

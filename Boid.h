@@ -30,6 +30,7 @@ private:
 	glm::vec3 calculateMatchVelocity(std::vector<BoidInfo> boidsInfo);
 	glm::vec3 calculateFollow(std::vector<BoidInfo> boidsInfo);
 	glm::vec3 calculateObstacleAvoidance(std::vector<Obstacle *> obstacles);
+	glm::vec3 calculateMouseAttraction(glm::vec3 origin, glm::vec3 dir);
 
 	void setModelMatrix(glm::mat4 mm) {modelMatrix = mm;}
 
@@ -39,7 +40,7 @@ public:
 	Boid();
 	virtual ~Boid();
 
-	void update(std::vector<Boid*> boids, std::vector<Obstacle *> obstacles, float dt);
+	void update(std::vector<Boid*> boids, std::vector<Obstacle *> obstacles, float dt, glm::vec3 camPos, glm::vec3 mouseRay, bool useMouse);
 	void setVelocity(glm::vec3 vel) {velocity = vel; aimingVelocity = vel;}
 	glm::vec3 getPosition() {return position;}
 	glm::vec3 getVelocity() { return velocity; }
